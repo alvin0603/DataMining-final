@@ -1,6 +1,6 @@
 # DataMining-final
 ## 目標
-將 RNA-Seq 基因數據分成 Known(分類)和 Unknown(分群)
+將 RNA-Seq 基因數據分成 Known(分類)和 Unknown(分群) 訓練資料只有三種病 但測試資料會有五種病
 
 ## 實驗數據：
 `Thetacompare` : 對比 θ（分類門檻）在 0.5 和 0.9 下的結果 -> 證實會大程度影響最終結果
