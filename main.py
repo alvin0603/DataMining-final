@@ -4,6 +4,7 @@ from collections import Counter
 import numpy as np
 import pandas as pd
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, confusion_matrix
+from sklearn.svm import OneClassSVM
 from dataset import GeneDataset
 from classification import classifier_controller
 from clustering import unknown_detector, kmeans
@@ -53,10 +54,48 @@ def run(classify_name, x_train, y_train, x_test, y_test, *, theta, k, seed):
         "cm": cm,}
     return result
 
+def run_with_svdd(x_train, y_train, x_test, y_test, *, theta, k, seed, nu):
+    svm = classifier_controller("svm")
+    svm.fit(x_train, y_train)
+    svdd = OneClassSVM(kernel="rbf", gamma="scale", nu=nu)
+    svdd.fit(x_train)
+    decision = svdd.decision_function(x_test)
+    mask_svdd_out = decision < 0
+    proba = svm.predict_proba(x_test)
+    mask_low = proba.max(axis=1) < theta
+    unknown_idx = np.where(mask_svdd_out | mask_low)[0]
+    known_idx = np.where(~(mask_svdd_out | mask_low))[0]
+    y_pred = np.empty_like(y_test, dtype=object)
+    if known_idx.size:
+        y_pred[known_idx] = svm.predict(x_test[known_idx])
+    cluster_counter = 0
+    if unknown_idx.size:
+        x_unknown = x_test[unknown_idx]
+        cluster_labels = kmeans(x_unknown, k=k, seed=seed)
+        cluster_counter = k
+        mapping = vote_and_map(cluster_labels, y_test[unknown_idx])
+        y_pred[unknown_idx] = np.array([mapping[c] for c in cluster_labels], dtype=object)
+    acc = accuracy_score(y_test, y_pred)
+    prec, rec, f1, _ = precision_recall_fscore_support(y_test, y_pred, average="macro", zero_division=0)
+    cm = confusion_matrix(y_test, y_pred)
+    result = {
+        "clf": "svdd_svm",
+        "acc": acc,
+        "prec": prec,
+        "rec": rec,
+        "f1": f1,
+        "known": int(known_idx.size),
+        "unk": int(unknown_idx.size),
+        "clusters": cluster_counter,
+        "cm": cm,}
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--theta", type=float, default=0.9, help="unknown threshold")
     parser.add_argument("--k", type=int, default=2, help="k for K‑Means")
+    parser.add_argument("--nu", type=float, default=0.1, help="SVDD nu")
     parser.add_argument("--seed", type=int, default=40)
     parser.add_argument("--show_cm", action="store_true", help="print confusion matrices")
     args = parser.parse_args()
@@ -70,11 +109,18 @@ def main():
         result = run(classify_name,x_train,y_train,x_test,y_test,theta=args.theta,k=args.k,seed=args.seed)
         results.append(result)
     
+    svdd_res = run_with_svdd(x_train, y_train, x_test, y_test,theta=args.theta, k=args.k, seed=args.seed, nu=args.nu)
+    results.append(svdd_res)
     svm_res = next(r for r in results if r["clf"] == "svm")
     labels = np.unique(y_test)
     df = pd.DataFrame(svm_res["cm"], index=labels, columns=labels)
     df["Total"] = df.sum(axis=1)         
     df.to_csv("baseline_svm_confusion.csv", index_label="True/Pred")
+
+    # SVDD+SVM+Kmeans
+    df2 = pd.DataFrame(svdd_res["cm"], index=labels, columns=labels)
+    df2["Total"] = df2.sum(axis=1)
+    df2.to_csv("baseline_svdd_confusion.csv", index_label="True/Pred")
 
     print("\nbaseline result:")
     header="#  Classifier  Clu.  Acc.   Prec.  Rec.   F1   Known  Unknown"
@@ -87,7 +133,7 @@ def main():
             f"{r['known']:^7}{r['unk']:^9}"
         )
     # chosen parameter
-    print(f"Params  θ={args.theta}  k={args.k}  seed={args.seed}\n")
+    print(f"Params  θ={args.theta}  k={args.k}  seed={args.seed}  v={args.nu}\n")
     if args.show_cm:
         for i, r in enumerate(results, 1):
             print(f"\n=== Confusion Matrix {i} ({r['clf']}) ===")
