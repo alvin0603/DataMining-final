@@ -35,10 +35,8 @@
 
 Adding other comments here in yourself...
 
-## 檔案太多一個一個載覺得很躁的話：
-
+## 檔案太多一個一個載覺得很躁的話
 1. 去官網載git
-
 
 (二擇一)
 2.1 在vscode 按contorl + shift + p -> 輸入git clone -> 輸入網址：`https://github.com/alvin0603/DataMining-final.git` -> 選 folder
