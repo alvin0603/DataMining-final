@@ -31,4 +31,6 @@
 
 *4. 數據圖很亂只是給你們看而已 不管是confusion matrix還是accuracy都不要用截圖 做成表格放到報告裡*
 
+*5. 除了基本原理方法外 實驗數據的部分做海報/書面時如果有不知道怎麼解釋的地方把架構寫好空著留給我寫就好*
+
 Adding other comments here in yourself...
