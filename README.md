@@ -37,5 +37,6 @@ Adding other comments here in yourself...
 
 ## 檔案太多一個一個載覺得很躁的話：
 1. 去官網載git
-2.1 在vscode 按contorl + shift + p -> 輸入git clone -> 輸入網址：https://github.com/alvin0603/DataMining-final.git -> 選 folder
-2.2 在自己 terminal 先進去 target folder -> git clone https://github.com/alvin0603/DataMining-final.git -> code . 或是直接從其他IDE打開這個folder
+2.1 在vscode 按contorl + shift + p -> 輸入git clone -> 輸入網址：`https://github.com/alvin0603/DataMining-final.git` -> 選 folder
+   
+2.2 在自己 terminal 先進去 target folder -> git clone `https://github.com/alvin0603/DataMining-final.git` -> code . 或是直接從其他IDE打開這個folder
