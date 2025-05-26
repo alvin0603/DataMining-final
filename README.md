@@ -16,7 +16,9 @@
 
 
 `Prediction Vs. One-vs-Rest Rejection` : 
+
 預設的 SVM 是用 **margin-based** -> 分類時兩個最大機率 label 相減 -> 用這個機率決定是否分類 (**看相對性**)  
+
 **One-vs-rest rejection** -> 另一種選擇機制，最大機率大於某個門檻才分類，否則分群 -> 對自己的label信心比較高 (**看絕對性**)-> 在一樣SVM+kmeans的情況下和同參數下(θ=0.9)，可以提高5%準確率
 
 
