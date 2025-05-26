@@ -33,7 +33,7 @@
 
 *5. 除了基本原理方法外 實驗數據的部分做海報/書面時如果有不知道怎麼解釋的地方把架構寫好空著留給我寫就好*
 
-*不確定海報的格式能不能用canva做 如果可以的話儘量海報 ppt 書面都用canva (word和ppt真的很鳥還不能共編)*
+*6. 不確定海報的格式能不能用canva做 如果可以的話儘量海報 ppt 書面都用canva (word和ppt真的很鳥還不能共編)*
 
 Adding other comments here in yourself...
 
